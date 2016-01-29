@@ -1,0 +1,39 @@
+name: pulseaudio
+version: 0.1
+summary: Audio framework (contains PulseAudio and alsa-lib) 
+description: Contains PulseAudio and its dependencies, to
+  enable apps to play back and record sound by talking to
+  PulseAudio.
+
+apps:
+  pulseaudio:
+    command: pulseaudio -vvvvnF $SNAP/etc/pulse/default.pa -p $SNAP/lib
+    security-override:
+      syscalls: [setpriority, bind, listen]
+# listen needed to listen for client connections
+# /run/udev (and bind) needed for scanning for sound cards
+# /dev/snd needed for accessing the sound cards
+# /run/dbus/system_bus_socket needed for Bluez 5
+      read-paths: [/run/udev/data/*, /dev/snd/control*, /dev/snd/pcm*]
+      write-paths: [/dev/snd/control*, /dev/snd/pcm*]
+
+parts:
+  pulseaudio:
+    plugin: autotools
+#    source: ../pkg-pulseaudio
+    source-vcs: git
+    source: git://anonscm.debian.org/pkg-pulseaudio/pulseaudio.git
+    source-branch: ubuntu-snappy
+    stage-packages: [libasound2-dev, libdbus-1-dev, libjson-c-dev, libglib2.0-dev,
+       libspeexdsp-dev, libbluetooth-dev, libwebrtc-audio-processing-dev, libltdl-dev,
+       libsndfile1-dev, libx11-xcb-dev, libx11-dev, libtdb-dev, libasyncns-dev, libxcb1-dev]
+    build-packages: []
+    configflags: [--disable-orc, --disable-gconf, --disable-bluez4, --disable-bluez5, --disable-esound,
+       --disable-adrian-aec, --disable-gtk3, --disable-hal-compat, --disable-systemd-login]
+  move-files:
+    plugin: copy
+    after: [pulseaudio]
+    files:
+      stage/lib/pulse-7.1/modules/*.so: lib/
+      stage/lib/pulseaudio/libpulsecommon-7.1.so: lib/libpulsecommon-7.1.so
+

@@ -1,3 +1,6 @@
+# Snappy patches
+0001-no-personality.patch
+
 # Ubuntu/Debian specific config/fixes
 0001-volume-config-changes.patch
 0005-dont-load-cork-music-on-phone.patch
@@ -14,7 +17,7 @@
 0202-dont-probe-ucm.patch
 0203-card-Add-hook-before-profile-changes.patch
 0206-module-bluetooth-discover-adding-module-option-profi.patch
-0207-Enable-pulseaudio-droid.patch
+# 0207-Enable-pulseaudio-droid.patch
 0208-module-bluetooth-device-Allow-leaving-transport-runn.patch
 0209-module-switch-on-connect-adding-parameter-to-allow-s.patch
 0210-module-device-restore-adding-property-to-skip.patch
