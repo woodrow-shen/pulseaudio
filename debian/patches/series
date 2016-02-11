@@ -1,4 +1,5 @@
 # Snappy patches
+0002-snappy-paths.patch
 0001-no-personality.patch
 
 # Ubuntu/Debian specific config/fixes

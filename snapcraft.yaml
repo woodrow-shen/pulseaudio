@@ -5,17 +5,30 @@ description: Contains PulseAudio and its dependencies, to
   enable apps to play back and record sound by talking to
   PulseAudio.
 
+# sudo snappy hw-assign pulseaudio.sideload /dev/snd/controlC0
+# sudo snappy hw-assign pulseaudio.sideload /dev/snd/pcmC0D0c
+# sudo snappy hw-assign pulseaudio.sideload /dev/snd/pcmC0D0p
+# sudo snappy hw-assign pulseaudio.sideload /dev/snd/timer
+# export ALSA_RUNTIME_PATH=/snap/pulseaudio.sideload/current/usr/share/alsa/alsa.conf
+
 apps:
   pulseaudio:
     command: pulseaudio -vvvvnF $SNAP/etc/pulse/default.pa -p $SNAP/lib
+    uses: [paserver-permissions]
+
+uses:
+  paserver-permissions:
+    type: migration-skill
     security-override:
       syscalls: [setpriority, bind, listen]
 # listen needed to listen for client connections
-# /run/udev (and bind) needed for scanning for sound cards
+# /run/udev/data (and bind) needed for scanning for sound cards
 # /dev/snd needed for accessing the sound cards
 # /run/dbus/system_bus_socket needed for Bluez 5
-      read-paths: [/run/udev/data/*, /dev/snd/control*, /dev/snd/pcm*]
-      write-paths: [/dev/snd/control*, /dev/snd/pcm*]
+# /run/user/<uid>/pulse - that's where clients connect
+      read-paths: [/run/udev/data/*, /dev/snd/control*, /dev/snd/pcm*, /run/user/*/pulse, /run/user/*/pulse/**]
+      write-paths: [/dev/snd/control*, /dev/snd/pcm*, /run/user/*/pulse, /run/user/*/pulse/**]
+      socket: [/run/user/*/pulse/native]
 
 parts:
   pulseaudio:

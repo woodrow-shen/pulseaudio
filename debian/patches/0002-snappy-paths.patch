@@ -1,0 +1,21 @@
+Index: pkg-pulseaudio/src/pulsecore/core-util.c
+===================================================================
+--- pkg-pulseaudio.orig/src/pulsecore/core-util.c	2016-02-11 11:14:31.000000000 +0100
++++ pkg-pulseaudio/src/pulsecore/core-util.c	2016-02-11 11:39:27.866826432 +0100
+@@ -3343,6 +3343,16 @@
+ char* pa_maybe_prefix_path(const char *path, const char *prefix) {
+     pa_assert(path);
+ 
++/* Ubuntu Snappy hack - if our directory starts with /share, then add the
++   snap directory first */
++
++    if (pa_startswith(prefix, "/share")) {
++        const char *t = getenv("SNAP");
++        pa_log_debug("Ubuntu snappy prefix is: %s", t);
++        if (t)
++            return pa_sprintf_malloc("%s%s" PA_PATH_SEP "%s", t, prefix, path);
++    }
++
+     if (pa_is_path_absolute(path))
+         return pa_xstrdup(path);
+ 
