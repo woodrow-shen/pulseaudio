@@ -9,18 +9,38 @@ description: Contains PulseAudio and its dependencies, to
 # sudo snappy hw-assign pulseaudio.sideload /dev/snd/pcmC0D0c
 # sudo snappy hw-assign pulseaudio.sideload /dev/snd/pcmC0D0p
 # sudo snappy hw-assign pulseaudio.sideload /dev/snd/timer
-# export ALSA_RUNTIME_PATH=/snap/pulseaudio.sideload/current/usr/share/alsa/alsa.conf
+# export ALSA_CONFIG_PATH=/snaps/pulseaudio.sideload/current/usr/share/alsa/alsa.conf
 
 apps:
   pulseaudio:
-    command: pulseaudio -vvvvnF $SNAP/etc/pulse/default.pa -p $SNAP/lib
+    command: pulseaudio --disable-shm=yes --exit-idle-time=-1 --disallow-exit=yes -vvvvnF $SNAP/etc/pulse/default.pa -p $SNAP/lib
     uses: [paserver-permissions]
+  pactl:
+    command: pactl
+    uses: [paclient-permissions]
+  pacat:
+    command: pacat
+    uses: [paclient-permissions]
+  parecord:
+    command: parecord
+    uses: [paclient-permissions]
+  paplay:
+    command: paplay
+    uses: [paclient-permissions]
 
 uses:
+  paclient-permissions:
+    type: migration-skill
+    security-override:
+      socket: [/run/user/*/pulse/native]
+      read-paths: [/run/user/*/pulse, /run/user/*/pulse/**]
+      write-paths: [/run/user/*/pulse/native]
+      syscalls: [sendto, recvfrom]
+
   paserver-permissions:
     type: migration-skill
     security-override:
-      syscalls: [setpriority, bind, listen]
+      syscalls: [setpriority, bind, listen, sendto, recvfrom, accept4]
 # listen needed to listen for client connections
 # /run/udev/data (and bind) needed for scanning for sound cards
 # /dev/snd needed for accessing the sound cards
