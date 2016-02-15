@@ -1,0 +1,23 @@
+From c021bfc6e06035d6b913cc6a05df1ee7ee2588f2 Mon Sep 17 00:00:00 2001
+From: Julien Isorce <julien.isorce@gmail.com>
+Date: Sat, 10 Oct 2015 20:11:21 +0100
+Subject: core-util: avoid calling fchmod if already right mode
+
+fchmod is denied in chromium sandbox.
+
+diff --git a/src/pulsecore/core-util.c b/src/pulsecore/core-util.c
+index 278ad63..2099686 100644
+--- a/src/pulsecore/core-util.c
++++ b/src/pulsecore/core-util.c
+@@ -343,7 +343,7 @@ again:
+ #endif
+ 
+ #ifdef HAVE_FCHMOD
+-    if (fchmod(fd, m) < 0) {
++    if ((st.st_mode & 07777) != m && fchmod(fd, m) < 0) {
+         pa_assert_se(pa_close(fd) >= 0);
+         goto fail;
+     };
+-- 
+cgit v0.10.2
+

@@ -13,6 +13,7 @@
 # Patches cherrypicked from upstream
 0101-conf-parser-add-support-for-.d-directories.patch
 0102-client-conf-daemon-conf-enable-.d-directories.patch
+0103-fchmod.patch
 
 # Ubuntu touch stuff
 0202-dont-probe-ucm.patch
